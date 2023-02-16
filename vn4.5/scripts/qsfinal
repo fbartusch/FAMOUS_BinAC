@@ -187,6 +187,7 @@ then                                           # PHIST existing file
   fi
 else
   echo -e "$0: Model $1 - Error: No history files"
+  echo -e "$PHIST"
   exit 135                                     # Abort if no hist files
 fi
 #L----------------------------------------------------------------------

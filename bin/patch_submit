@@ -1,0 +1,31 @@
+#!/bin/bash
+
+source ~/.profile
+
+exp_id=$1
+
+# Save original SUBMIT if the script messes something up
+if [[ ! -f "~/$exp_id/SUBMIT.bac" ]]; then
+    echo "Backup SUBMIT"
+    cp -v ~/$exp_id/SUBMIT ~/$exp_id/SUBMIT.bac
+fi
+
+# Remove ". /etc/profile" on line 4, as this throws errors.
+# All important variables, etc. should be specified in ~/.profile, so we don't need this
+sed -i '4d' ~/$exp_id/SUBMIT
+
+# QUEUE_NRUN=normal -> QUEUE_NRUN=long (line 39)
+sed -i "39s/normal/long/1" ~/$exp_id/SUBMIT
+
+# QUEUE_CRUN=normal -> QUEUE_CRUN=long (line 43)
+sed -i "43s/normal/long/1" ~/$exp_id/SUBMIT
+
+# MEMORY=500Mw -> MEMORY=50gb (line 48)
+sed -i "48s/500Mw/50gb/1" ~/$exp_id/SUBMIT
+
+# ACCOUNT=n02-qesm -> ACCOUNT=$USER (line 56)
+sed -i "56s/n02-qesm/$USER/1" ~/$exp_id/SUBMIT
+
+# Do not run the script (maybe there are errors in it)
+# $qsubCmd1 -> #$qsubCmd1 (line 360)
+sed -i "360s/^/#/1" ~/$exp_id/SUBMIT

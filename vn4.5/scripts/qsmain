@@ -563,6 +563,7 @@ $OUTPUT
   echo -e "\nqsmain($SECONDS): ***\tRunning make for compile step\n" \
     >>$OUTPUT
   echo -e "%MAKEC%" >>$OUTPUT
+  env >>$OUTPUT 2>&1
   make -f makefile.compile >>$OUTPUT 2>&1
   test=$?
   if [ "$test" -eq 0 ]
@@ -583,6 +584,9 @@ $OUTPUT
   echo -e "\nqsmain($SECONDS): ***\tRunning make for link step\n" \
     >>$OUTPUT
   echo -e "%MAKEL%" >>$OUTPUT
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64
+  
+  env >>$OUTPUT 2>&1
   make -f makefile.link >>$OUTPUT 2>&1
   test=$?
   if [ "$test" -eq 0 ]
@@ -723,7 +727,7 @@ fi
 #L Step 4A - Associate logical filenames with actual run-time filenames
 #L
 # set up file containing env vars by changing ':' to '='
-$UM_SED "s/ *: */=/" $FTXX >$FTXX.new
+sed "s/ *: */=/" $FTXX >$FTXX.new
 >$FTXX.vars
 chmod 755 $FTXX.new $FTXX.vars
 . $FTXX.new

@@ -160,7 +160,7 @@ cat > $RESUB_FILE << eof
   at now <<EOF
   # run profiles to get things like UMDIR
   # hopefully, they will not be interactive.
-  . /etc/profile $REDIRECTS
+  #. /etc/profile $REDIRECTS
   . $HOME/setvars $REDIRECTS
   # set JOBDIR variable
   JOBDIR=$UMUI_RUNS/umui_runs/$RUNID-$SUBMITID
