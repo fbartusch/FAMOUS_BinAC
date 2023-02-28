@@ -68,6 +68,20 @@ cd $UMDIR/gcom3.8/gcom
 make
 ```
 
+I had the problem that some system libraries at `/usr/lib64` were not found by the linker. If I copied them to the gcom directory they were found:
+
+```
+cp libpthread.a librt.a libm.a libc.a libdl.a /beegfs/work/tu_iioba01/FAMOUS/gcom3.8/gcom/lib
+[tu_iioba01@login03 lib64]$ ll /beegfs/work/tu_iioba01/FAMOUS/gcom3.8/gcom/lib
+total 180
+-rw-r--r-- 1 tu_iioba01 tu_tu 5105516 Feb 28 12:37 libc.a
+-rw-r--r-- 1 tu_iioba01 tu_tu   13138 Feb 28 12:37 libdl.a
+-rw-r--r-- 1 tu_iioba01 tu_tu  611586 Oct 13 14:42 libgcom_buffered_mpi.a
+-rw-r--r-- 1 tu_iioba01 tu_tu 2157820 Feb 28 12:37 libm.a
+-rw-r--r-- 1 tu_iioba01 tu_tu  152194 Feb 28 12:37 libpthread.a
+-rw-r--r-- 1 tu_iioba01 tu_tu   75902 Feb 28 12:37 librt.a
+```
+
 ## How to compile new model
 
 There are many options and commands in the scripts that only run on a special cluster.
@@ -156,35 +170,4 @@ export MPIF90_UM=mpifort
  ```
  qsub qsubmit.login01.binac.uni-tuebingen.de
  ```
- 
- ## The current problem:
- 
- When running the jobscript the job stops after roughly an hour, as there is a linking problem.
- 
-```
-qsmain(3473.054): ***   Running make for link step
 
-%MAKEL%
-mpifort blkdata.o umshell1.o libum1.a \
--static -Wl,--warn-once -Wl,--noinhibit-exec -L/beegfs/work/tu_iioba01/FAMOUS/gcom3.8/gcom/lib -lgcom_buffered_mpi -o /beegfs/work/tu_iioba01/FAMOUS/vn4.5/exec/famous.MOSESI.exe
-ld: cannot find -lpthread
-ld: cannot find -lrt
-ld: cannot find -lpthread
-ld: cannot find -lm
-ld: cannot find -lc
-ld: cannot find -ldl
-ld: cannot find -lc
-make: *** [/beegfs/work/tu_iioba01/FAMOUS/vn4.5/exec/famous.MOSESI.exe] Error 1
-
-qsmain(3477.718): ***   Link step make has failed. Exiting.
-
-Problem is at:
-/beegfs/work/tu_iioba01/FAMOUS/vn4.5/scripts/qsmain:586
-make -f makefile.link >>$OUTPUT 2>&1
-
-The makefile runs the following command:
-mpifort blkdata.o umshell1.o libum1.a $(MPIF90_STATIC) -Wl,--warn-once -Wl,--noinhibit-exec -L$(UMDIR)/gcom3.8/gcom/lib -lgcom_buffered_mpi -o /beegfs/work/tu_iioba01/FAMOUS/vn4.5/exec/famous.MOSESI.exe
-
-Which should translate to:
-mpifort blkdata.o umshell1.o libum1.a -static -Wl --warn-once -Wl --noinhibit-exec -L/beegfs/work/tu_iioba01/FAMOUS/gcom3.8/gcom/lib -lgcom_buffered_mpi -o /beegfs/work/tu_iioba01/FAMOUS/vn4.5/exec/famous.MOSESI.exe
-```
