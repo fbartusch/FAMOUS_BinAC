@@ -1,15 +1,15 @@
 # Default C compiler options
-@define  CCOM_CMD=gcc
+@define  CCOM_CMD=icc
 @ccom    CCOM_OPTS=
 @ccom    CCOM_OPTIM=
 
 # Default fortran compiler options
-@define  FCOM_CMD=mpif90
+@define  FCOM_CMD=mpifort
 @fort    FCOM_OPTS=-i8 -r8 -fp-model source -g -traceback
 @fort    FCOM_OPTIM=-O2
 
 # Default load options
-@define  LCOM_CMD=mpif90
+@define  LCOM_CMD=mpifort
 @load    LCOM_OPTS=-Wl,--warn-once -Wl,--noinhibit-exec
 @load    LCOM_PATH=-L$(UMDIR)/gcom3.8/gcom/lib -lgcom_buffered_mpi
 @load    LCOM_LIBS=
